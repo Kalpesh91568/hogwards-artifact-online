@@ -1,5 +1,6 @@
-package com.spring.hogwards.wizard;
+package com.spring.hogwards.service;
 
+import com.spring.hogwards.repository.WizardRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

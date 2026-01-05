@@ -1,6 +1,5 @@
-package com.spring.hogwards.artifacts;
+package com.spring.hogwards.entity;
 
-import com.spring.hogwards.wizard.Wizard;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;

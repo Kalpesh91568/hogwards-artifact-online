@@ -1,6 +1,9 @@
-package com.spring.hogwards.artifacts;
+package com.spring.hogwards.exception;
 
-import com.spring.hogwards.wizard.Wizard;
+import com.spring.hogwards.entity.Artifact;
+import com.spring.hogwards.repository.ArtifactRepository;
+import com.spring.hogwards.service.ArtifactService;
+import com.spring.hogwards.entity.Wizard;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

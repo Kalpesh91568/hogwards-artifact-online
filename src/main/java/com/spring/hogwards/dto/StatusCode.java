@@ -1,4 +1,4 @@
-package com.spring.hogwards.system;
+package com.spring.hogwards.dto;
 
 public class StatusCode {
 

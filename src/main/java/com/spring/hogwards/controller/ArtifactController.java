@@ -1,6 +1,7 @@
-package com.spring.hogwards.artifacts;
+package com.spring.hogwards.controller;
 
-import com.spring.hogwards.system.Result;
+import com.spring.hogwards.service.ArtifactService;
+import com.spring.hogwards.dto.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,4 +1,4 @@
-package com.spring.hogwards.artifacts;
+package com.spring.hogwards.exception;
 
 public class ArtifactNotFoundException extends RuntimeException{
 

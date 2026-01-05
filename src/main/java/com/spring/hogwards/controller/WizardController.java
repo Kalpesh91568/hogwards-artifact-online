@@ -1,5 +1,6 @@
-package com.spring.hogwards.wizard;
+package com.spring.hogwards.controller;
 
+import com.spring.hogwards.service.WizardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 

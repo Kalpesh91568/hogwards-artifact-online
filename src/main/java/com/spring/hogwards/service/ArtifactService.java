@@ -1,5 +1,8 @@
-package com.spring.hogwards.artifacts;
+package com.spring.hogwards.service;
 
+import com.spring.hogwards.entity.Artifact;
+import com.spring.hogwards.exception.ArtifactNotFoundException;
+import com.spring.hogwards.repository.ArtifactRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

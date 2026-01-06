@@ -1,91 +1,185 @@
 package com.spring.hogwards.exception;
 
-import com.spring.hogwards.entity.Artifact;
-import com.spring.hogwards.repository.ArtifactRepository;
-import com.spring.hogwards.service.ArtifactService;
-import com.spring.hogwards.entity.Wizard;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import com.spring.hogwards.dto.ArtifactDto;
+import com.spring.hogwards.entity.Artifact;
+import com.spring.hogwards.mapper.ArtifactMapper;
+import com.spring.hogwards.repository.ArtifactRepository;
+import com.spring.hogwards.service.ArtifactService;
 
 @ExtendWith(MockitoExtension.class)
 class ArtifactServiceTest {
 
-    @Mock
-    private ArtifactRepository artifactRepository;
+  @Mock private ArtifactRepository artifactRepository;
 
-    @InjectMocks
-    private ArtifactService artifactService;
+  @Mock private ArtifactMapper artifactMapper;
 
-    @BeforeEach
-    void setUp() {
-    }
+  @InjectMocks private ArtifactService artifactService;
 
-    @AfterEach
-    void tearDown() {
-    }
+  List<Artifact> artifacts;
 
-    @Test
-    void testFindByIdSuccess() {
-        // Given : Arrange inputs & targets. Define the behaviour of Mock object artifactRepository
+  @BeforeEach
+  void setUp() {}
 
-        Wizard wizard =  Wizard.builder()
-                .id(2)
-                .name("Harry Porter")
-                .build();
+  @AfterEach
+  void tearDown() {}
 
-        Artifact artifact = Artifact.builder()
-                .id("123456")
-                .name("Test artifact")
-                .description("Test Description")
-                .imageUrl("Demo URL")
-                .owner(wizard)
-                .build();
+  @Test
+  void shouldReturnArtifactById() {
 
-        given(artifactRepository.findById("123456")).willReturn(Optional.of(artifact));
+    // ARRANGE
+    Integer id = 1;
 
-        // When : Act on the target behavior. when steps should cover the method to be tested
+    Artifact artifact = Artifact.builder().id(id).name("Elder Wand").build();
 
-        Artifact returnedArtifact = artifactService.findById("123456");
+    ArtifactDto dto = ArtifactDto.builder().id(id).name("Elder Wand").build();
 
-        // Then : Assert Expected Outcomes
+    when(artifactRepository.findById(id)).thenReturn(Optional.of(artifact));
+    when(artifactMapper.toDto(artifact)).thenReturn(dto);
 
-        assertThat(returnedArtifact.getId()).isEqualTo(artifact.getId());
-        assertThat(returnedArtifact.getName()).isEqualTo(artifact.getName());
-        assertThat(returnedArtifact.getDescription()).isEqualTo(artifact.getDescription());
-        assertThat(returnedArtifact.getImageUrl()).isEqualTo(artifact.getImageUrl());
-        assertThat(returnedArtifact.getOwner()).isEqualTo(artifact.getOwner());
+    // ACT
+    ArtifactDto result = artifactService.findById(id);
 
-        verify(artifactRepository,times(1)).findById("123456");
-    }
+    // ASSERT
+    assertNotNull(result);
+    assertEquals(id, result.id());
+    assertEquals("Elder Wand", result.name());
 
-    @Test
-    void testFindByIdNotFound(){
+    verify(artifactRepository).findById(id);
+    verify(artifactMapper).toDto(artifact);
+  }
 
-        // Given
-        given(artifactRepository.findById(Mockito.any(String.class))).willReturn(Optional.empty());
+  @Test
+  void shouldThrowExceptionWhenArtifactNotFound() {
 
-        // When
-        Throwable thrown = catchThrowable(()-> { Artifact returnedArtifact = artifactService.findById("123456");});
+    // ARRANGE
+    Integer id = 99;
+    when(artifactRepository.findById(id)).thenReturn(Optional.empty());
 
-        // Then
-        assertThat(thrown).isInstanceOf(ArtifactNotFoundException.class)
-                .hasMessage("Could Not Found Artifact with Id 123456 : (");
+    // ACT + ASSERT
+    assertThrows(ArtifactNotFoundException.class, () -> artifactService.findById(id));
 
-        verify(artifactRepository,times(1)).findById("123456");
+    verify(artifactRepository).findById(id);
+    verifyNoInteractions(artifactMapper);
+  }
 
-    }
+  @Test
+  void shouldReturnAllArtifacts() {
+
+    // ARRANGE
+    Artifact a1 = Artifact.builder().id(1).name("A1").build();
+    Artifact a2 = Artifact.builder().id(2).name("A2").build();
+
+    ArtifactDto d1 = ArtifactDto.builder().id(1).name("A1").build();
+    ArtifactDto d2 = ArtifactDto.builder().id(2).name("A2").build();
+
+    when(artifactRepository.findAll()).thenReturn(List.of(a1, a2));
+    when(artifactMapper.toDto(a1)).thenReturn(d1);
+    when(artifactMapper.toDto(a2)).thenReturn(d2);
+
+    // ACT
+    List<ArtifactDto> result = artifactService.findAll();
+
+    // ASSERT
+    assertEquals(2, result.size());
+    verify(artifactRepository).findAll();
+  }
+
+  @Test
+  void shouldSaveArtifact() {
+
+    // ARRANGE
+    ArtifactDto inputDto = ArtifactDto.builder().name("Invisibility Cloak").build();
+
+    Artifact entity = Artifact.builder().name("Invisibility Cloak").build();
+
+    Artifact savedEntity = Artifact.builder().id(1).name("Invisibility Cloak").build();
+
+    ArtifactDto outputDto = ArtifactDto.builder().id(1).name("Invisibility Cloak").build();
+
+    when(artifactMapper.toEntity(inputDto)).thenReturn(entity);
+    when(artifactRepository.save(entity)).thenReturn(savedEntity);
+    when(artifactMapper.toDto(savedEntity)).thenReturn(outputDto);
+
+    // ACT
+    ArtifactDto result = artifactService.save(inputDto);
+
+    // ASSERT
+    assertNotNull(result);
+    assertEquals(1, result.id());
+
+    verify(artifactMapper).toEntity(inputDto);
+    verify(artifactRepository).save(entity);
+    verify(artifactMapper).toDto(savedEntity);
+  }
+
+  @Test
+  void shouldUpdateArtifact() {
+
+    // ARRANGE
+    Integer id = 1;
+
+    Artifact existing = Artifact.builder().id(id).name("Old Name").build();
+
+    ArtifactDto updateDto = ArtifactDto.builder().name("New Name").build();
+
+    Artifact updated = Artifact.builder().id(id).name("New Name").build();
+
+    ArtifactDto resultDto = ArtifactDto.builder().id(id).name("New Name").build();
+
+    when(artifactRepository.findById(id)).thenReturn(Optional.of(existing));
+    when(artifactRepository.save(existing)).thenReturn(updated);
+    when(artifactMapper.toDto(updated)).thenReturn(resultDto);
+
+    // ACT
+    ArtifactDto result = artifactService.update(id, updateDto);
+
+    // ASSERT
+    assertEquals("New Name", result.name());
+
+    verify(artifactMapper).update(existing, updateDto);
+    verify(artifactRepository).save(existing);
+  }
+
+  @Test
+  void shouldDeleteArtifact() {
+
+    // ARRANGE
+    Integer id = 1;
+    when(artifactRepository.existsById(id)).thenReturn(true);
+
+    // ACT
+    artifactService.delete(id);
+
+    // ASSERT
+    verify(artifactRepository).deleteById(id);
+  }
+
+  @Test
+  void shouldThrowExceptionWhenDeletingNonExistingArtifact() {
+
+    // ARRANGE
+    Integer id = 99;
+    when(artifactRepository.existsById(id)).thenReturn(false);
+
+    // ACT + ASSERT
+    assertThrows(ArtifactNotFoundException.class, () -> artifactService.delete(id));
+
+    verify(artifactRepository).existsById(id);
+    verify(artifactRepository, never()).deleteById(any());
+  }
 }

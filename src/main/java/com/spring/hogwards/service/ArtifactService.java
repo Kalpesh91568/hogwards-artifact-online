@@ -12,20 +12,19 @@ import com.spring.hogwards.exception.ArtifactNotFoundException;
 import com.spring.hogwards.mapper.ArtifactMapper;
 import com.spring.hogwards.repository.ArtifactRepository;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 @Service
 @Transactional
-@RequiredArgsConstructor
-@Slf4j
 public class ArtifactService {
+  public ArtifactService(ArtifactRepository artifactRepository, ArtifactMapper artifactMapper) {
+    this.artifactRepository = artifactRepository;
+    this.artifactMapper = artifactMapper;
+  }
 
   private final ArtifactRepository artifactRepository;
   private final ArtifactMapper artifactMapper;
 
   public ArtifactDto findById(Integer artifactId) {
-    log.info("Getting Artifact with ID : {} ", artifactId);
+    //log.info("Getting Artifact with ID : {} ", artifactId);
     return artifactRepository
         .findById(artifactId)
         .map(artifactMapper::toDto)
@@ -33,19 +32,19 @@ public class ArtifactService {
   }
 
   public List<ArtifactDto> findAll() {
-    log.info("Getting All the Artifacts.....");
+    //log.info("Getting All the Artifacts.....");
     return artifactRepository.findAll().stream().map(artifactMapper::toDto).toList();
   }
 
   public ArtifactDto save(ArtifactDto artifactDto) {
-    log.info("Creating new Artifact : {} ", artifactDto);
+   // log.info("Creating new Artifact : {} ", artifactDto);
     Artifact newArtifact = artifactMapper.toEntity(artifactDto);
     newArtifact = artifactRepository.save(newArtifact);
     return artifactMapper.toDto(newArtifact);
   }
 
   public ArtifactDto update(Integer artifactId, ArtifactDto artifactDto) {
-    log.info("Updating Alert with Id : {}", artifactId);
+   // log.info("Updating Alert with Id : {}", artifactId);
     Artifact artifactExist =
         artifactRepository
             .findById(artifactId)
@@ -57,7 +56,7 @@ public class ArtifactService {
   }
 
   public void delete(Integer artifactId) {
-    log.info("Deleting artifact with Id : {}", artifactId);
+    //log.info("Deleting artifact with Id : {}", artifactId);
     boolean isExist = artifactRepository.existsById(artifactId);
     if (isExist) {
       artifactRepository.deleteById(artifactId);

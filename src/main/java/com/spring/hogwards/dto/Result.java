@@ -1,12 +1,6 @@
 package com.spring.hogwards.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@Builder
 public class Result {
   private boolean flag;
   private Integer code;
@@ -24,5 +18,37 @@ public class Result {
     this.flag = flag;
     this.code = code;
     this.message = message;
+  }
+
+  public boolean isFlag() {
+    return flag;
+  }
+
+  public void setFlag(boolean flag) {
+    this.flag = flag;
+  }
+
+  public Integer getCode() {
+    return code;
+  }
+
+  public void setCode(Integer code) {
+    this.code = code;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  public Object getData() {
+    return data;
+  }
+
+  public void setData(Object data) {
+    this.data = data;
   }
 }

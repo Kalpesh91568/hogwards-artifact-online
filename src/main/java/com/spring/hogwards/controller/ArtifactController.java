@@ -11,15 +11,16 @@ import com.spring.hogwards.dto.Result;
 import com.spring.hogwards.dto.StatusCode;
 import com.spring.hogwards.service.ArtifactService;
 
-import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequiredArgsConstructor
 public class ArtifactController {
+  public ArtifactController(ArtifactService artifactService) {
+    this.artifactService = artifactService;
+  }
 
   private final ArtifactService artifactService;
 
-  @GetMapping("/{artifactId}")
+  @GetMapping("/artifacts/{artifactId}")
   public ResponseEntity<Result> findArtifactById(@PathVariable Integer artifactId) {
 
     ArtifactDto artifactDto = artifactService.findById(artifactId);
@@ -27,21 +28,21 @@ public class ArtifactController {
         new Result(true, StatusCode.SUCCESS, "Found One Success", artifactDto), HttpStatus.OK);
   }
 
-  @GetMapping("/")
+  @GetMapping("/artifact")
   public ResponseEntity<Result> findAllArtifacts() {
     List<ArtifactDto> artifactDtos = artifactService.findAll();
     return new ResponseEntity<>(
         new Result(true, StatusCode.SUCCESS, "Find All Success", artifactDtos), HttpStatus.OK);
   }
 
-  @PostMapping
+  @PostMapping("/artifact")
   public ResponseEntity<Result> saveArtifact(@RequestBody ArtifactDto artifactDto) {
     ArtifactDto dto = artifactService.save(artifactDto);
     return new ResponseEntity<>(
         new Result(true, StatusCode.CREATED, "SuccessFully Created", dto), HttpStatus.CREATED);
   }
 
-  @PutMapping("/{artifactId}")
+  @PutMapping("/artifact/{artifactId}")
   public ResponseEntity<Result> updateArtifact(
       @PathVariable Integer artifactID, @RequestBody ArtifactDto artifactDto) {
     ArtifactDto dto = artifactService.update(artifactID, artifactDto);
@@ -49,7 +50,7 @@ public class ArtifactController {
         new Result(true, StatusCode.SUCCESS, "SuccessFully Updated", dto), HttpStatus.OK);
   }
 
-  @DeleteMapping("/{artifactId}")
+  @DeleteMapping("/artifact/{artifactId}")
   public ResponseEntity<Result> deleteArtifact(@PathVariable Integer artifactId) {
     artifactService.delete(artifactId);
     return new ResponseEntity<>(

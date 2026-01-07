@@ -17,4 +17,11 @@ public class GlobalExceptionHandler {
       ArtifactNotFoundException artifactNotFoundException) {
     return new Result(false, StatusCode.NOT_FOUND, artifactNotFoundException.getMessage());
   }
+
+  @ExceptionHandler(WizardNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public Result handleWizardNotFoundException(
+          WizardNotFoundException wizardNotFoundException) {
+    return new Result(false, StatusCode.NOT_FOUND, wizardNotFoundException.getMessage());
+  }
 }
